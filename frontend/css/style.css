@@ -1,0 +1,478 @@
+/* 智能刀具柜辅助选型系统 - 自定义样式 */
+
+/* 全局样式 */
+body {
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: 70px;
+}
+
+/* 页脚样式 */
+.footer {
+    color: white;
+    font-size: 14px;            /* 调整字号，也可用 0.875rem */
+    margin-top: auto;
+    padding-top: 0.5rem !important;   /* 调整为所需值 */
+    padding-bottom: 0.5rem !important;
+}
+
+.footer a {
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: #E0CA76 !important;
+    text-decoration: none;
+}
+
+/* 步骤指示器样式 */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.step-title {
+    font-size: 14px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.step-line {
+    flex: 1;
+    height: 2px;
+    background-color: #e9ecef;
+    margin: 0 10px;
+    max-width: 100px;
+}
+
+.step.active .step-number {
+    background-color: #002B69;
+    color: white;
+}
+
+.step.active .step-title {
+    color: #002B69;
+    font-weight: bold;
+}
+
+.step.completed .step-number {
+    background-color: #002B69;
+    color: white;
+}
+
+.step.completed .step-title {
+    color: #002B69;
+}
+
+.step.completed + .step-line {
+    background-color: #E0CA76;
+}
+
+/* 产品系列卡片样式 */
+.product-series-card {
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+}
+
+.product-series-card:hover {
+    border-color: #002B69;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 柜子类型卡片样式 */
+.cabinet-type-card {
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.cabinet-type-card:hover {
+    border-color: #002B69;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 弹簧托盘样式 */
+.spring-tray {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.spring-tray:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.spring-tray-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 弹簧可视化样式 */
+.spring-visualization {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    padding: 5px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    width: 230px;
+}
+
+.spring-visualization svg {
+    width: 100% !important;
+    height: auto;
+}
+
+.spring-item {
+    flex: 1 1 0;
+    width: 10px;
+    height: 30px;
+    background-color: #002B69;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.interval-type-25mm .spring-item {
+    width: 12px;
+}
+
+.interval-type-35mm .spring-item {
+    width: 16px;
+}
+
+.interval-type-45mm .spring-item {
+    width: 20px;
+}
+
+/* 抽屉托盘样式 */
+.drawer-tray {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.drawer-tray:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.drawer-tray-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 抽屉可视化样式 */
+.drawer-visualization {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    padding: 5px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    width: 150px;
+    height: 40px;
+}
+
+.drawer-channel {
+    flex: 1 1 0;
+    background-color: #002B69;
+    margin: 1px;
+    height: 30px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* 副柜卡片样式 */
+.sub-cabinet-card {
+    margin-bottom: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sub-cabinet-card:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.sub-cabinet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0;
+}
+
+.sub-cabinet-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.sub-cabinet-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* 方案总览样式 */
+.overview-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.overview-item:last-child {
+    border-bottom: none;
+}
+
+.overview-label {
+    font-weight: bold;
+    color: #6c757d;
+}
+
+/* 配置列表样式 */
+.config-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .step-indicator {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .step-line {
+        display: none;
+    }
+    
+    .spring-tray-content,
+    .drawer-tray-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .spring-visualization,
+    .drawer-visualization {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .sub-cabinet-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .sub-cabinet-actions {
+        justify-content: center;
+    }
+}
+
+/* 表单样式 */
+.form-control:focus {
+    border-color: #002B69;
+    box-shadow: 0 0 0 0.25rem rgba(0, 43, 105, 0.25);
+}
+
+/* 按钮样式 */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* 主要按钮样式 */
+.btn-primary {
+    background-color: #002B69 !important;
+    border-color: #002B69 !important;
+}
+
+.btn-primary:hover {
+    background-color: #001a47 !important;
+    border-color: #001a47 !important;
+}
+
+/* 次要按钮样式 */
+.btn-secondary {
+    background-color: #002B69 !important;
+    border-color: #002B69 !important;
+}
+
+.btn-secondary:hover {
+    background-color: #001a47 !important;
+    border-color: #001a47 !important;
+}
+
+/* 加载动画 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #002B69;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 成功/错误消息样式 */
+.alert {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 工具提示样式 */
+.tooltip {
+    font-size: 14px;
+}
+
+/* 模态框样式优化 */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer {
+    border-radius: 0 0 12px 12px;
+    border-top: 1px solid #dee2e6;
+}
+
+/* 表格样式 */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    text-align: center;
+}
+
+.table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 弹簧和抽屉配置界面优化 */
+.spring-trays-container,
+.drawer-trays-container {
+    /* max-height: 500px; */
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* 间隔选择器样式 */
+.interval-selector,
+.channel-selector {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* 响应式优化 */
+@media (max-width: 992px) {
+    .spring-tray-content,
+    .drawer-tray-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .spring-visualization,
+    .drawer-visualization {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* 打印样式 */
+@media print {
+    .navbar,
+    .step-indicator,
+    .btn,
+    .modal-footer {
+        display: none !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+    }
+    
+    body {
+        background-color: white !important;
+    }
+}

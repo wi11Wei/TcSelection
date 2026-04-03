@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESAC金鹭智选工具</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #002B69;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="img/gesac-logo1.png" alt="GESAC Logo" height="30" class="mr-2">
+                GESAC金鹭智选工具
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="view-solutions-btn">
+                            <i class="fa fa-list-alt mr-1"></i> 已保存方案
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="new-solution-btn">
+                            <i class="fa fa-plus-circle mr-1"></i> 新建方案
+                        </a>
+                    </li>
+                    
+                    <!-- 帮助中心 -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="help-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-question-circle mr-1"></i> 帮助中心
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="help-dropdown">
+                            <li><a class="dropdown-item" href="#" id="download-guide">操作指南PDF下载</a></li>
+                            <li><a class="dropdown-item" href="#" id="faq-link">常见问题FAQ</a></li>
+                            <li><a class="dropdown-item" href="#" id="online-service">在线客服</a></li>
+                        </ul>
+                    </li>
+                    <!-- 语言选择 -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="language-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa fa-globe mr-1"></i> 简体中文
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="language-dropdown">
+                            <li><a class="dropdown-item" href="#" data-lang="zh-CN">简体中文</a></li>
+                            <li><a class="dropdown-item" href="#" data-lang="en">English</a></li>
+                        </ul>
+                    </li>
+                    <!-- 登录按钮 -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="login-btn" style="pointer-events: none;">
+                            <i class="fa fa-user mr-1"></i> 登录
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <div class="container-fluid mt-4">
+        <!-- 步骤指示器 -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-2">
+                <button id="prev-step-btn" class="btn btn-secondary" disabled>
+                    <i class="fa fa-arrow-left mr-2"></i>上一步
+                </button>
+            </div>
+            <div class="col-8">
+                <div class="step-indicator">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">选择产品系列</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">配置主柜</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">配置副柜</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-title">生成方案</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2 text-end">
+                <button id="next-step-btn" class="btn btn-primary" disabled>
+                    下一步<i class="fa fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 步骤内容区域 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- 步骤一：选择产品系列 -->
+                        <div id="step-1-content" class="step-content active">
+                            <div class="text-center mb-6">
+                                <h1 style="font-size: 2.5rem; font-weight: bold; color: #002B69; margin-bottom: 0.5rem;">智能刀具柜在线选配中心</h1>
+                                <p style="font-size: 1.1rem; color: #6c757d; max-width: 800px; margin: 0 auto; margin-bottom: 1rem;">按需选型 · 高效管理 · 安全溯源，为您的工业生产提供智能刀具管理解决方案</p>
+                            </div>
+                            <!-- <h4 class="mb-4">步骤一：选择产品系列</h4> -->
+                            <div class="row justify-content-center">
+                                <div class="col-md-4">
+                                    <div class="card product-series-card" data-series="professional">
+                                        <div class="card-header" style="background-color: #002B69; color: white;">
+                                            <h5 class="mb-0">专业型</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-center mb-3">
+                                                <img src="img/全型号.png" alt="专业型刀具柜" class="img-fluid" style="max-height: 150px; object-fit: contain;">
+                                                <p class="mt-2 font-weight-bold" style="color: #6c757d">40/60/80货道 | 主副柜组合 | 全维度选配</p>
+                                            </div>
+                                            <ul class="list-group mb-3">
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 首台仅弹簧/抽屉主柜，副柜0-5台可选
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 多层多通道自定义，仓位灵活规划
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 专业功能模块+定制化部署，支持系统对接
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 适合多品种管理/规模化生产场景
+                                                </li>
+                                            </ul>
+                                            <button class="btn btn-primary w-100 select-series-btn" data-series="professional">
+                                                选择专业型
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1"></div>
+                                <div class="col-md-4">
+                                    <div class="card product-series-card" data-series="standard">
+                                        <div class="card-header" style="background-color: #002B69; color: white;">
+                                            <h5 class="mb-0">通用型</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="text-center mb-3">
+                                                <img src="img/金鹭050.png" alt="通用型刀具柜" class="img-fluid" style="max-height: 150px; object-fit: contain;">
+                                                <p class="mt-2 font-weight-bold" style="color: #6c757d">50货道 | 存储量500-750件 | 15.6寸触摸交互</p>
+                                            </div>
+                                            <ul class="list-group mb-3">
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 企业版/零售版弹簧主柜双款可选
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 20/30螺距弹簧，单通道15/10仓位
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 极简配置，快速部署
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <i class="fa fa-check-circle text-success mr-2"></i> 适合标准品管理/小型生产场景
+                                                </li>
+                                            </ul>
+                                            <button class="btn btn-secondary w-100 select-series-btn" data-series="standard">
+                                                选择通用型
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 步骤二：配置主柜 -->
+                        <div id="step-2-content" class="step-content" style="display: none;">
+                            <div class="text-center mb-6">
+                                <h1 style="font-size: 2.5rem; font-weight: bold; color: #002B69; margin-bottom: 0.5rem;">智能刀具柜，重构您的刀具管理</h1>
+                                <p style="font-size: 1.1rem; color: #6c757d; max-width: 1000px; margin: 0 auto; margin-bottom: 1rem;">
+                                    24h无人值守 - 随用随取，自动记录 | 精准库存 - 实时盘点，降低库存成本 | 权限追溯 - 人员权限绑定，领用记录可查</p>
+                            </div>
+                            <div id="main-cabinet-selection" class="mb-4">
+                                <div class="row mt-3" id="main-cabinet-types">
+                                    <!-- 主柜类型选项将通过JavaScript动态生成 -->
+                                </div>
+                            </div>
+                            <div id="main-cabinet-configuration" class="mt-4" style="display: none;">
+                                <!-- 主柜配置内容将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+
+                        <!-- 步骤三：配置副柜 -->
+                        <div id="step-3-content" class="step-content" style="display: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h3>步骤三：配置副柜</h3>
+                                <div class="text-right d-flex align-items-center">
+                                    <div class="text-sm text-muted" style="font-weight: bolder;">方案总价：</div>
+                                    <div class="text-xl font-weight-bold text-primary" id="total-solution-price" style="font-weight: bolder;">￥0</div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mb-4">
+                                <i class="fa fa-info-circle mr-2"></i>
+                                您可以添加0-5台副柜。每添加一台副柜，请选择副柜类型并进行内部配置。
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <button id="add-sub-cabinet-btn" class="btn btn-primary">
+                                        <i class="fa fa-plus mr-2"></i>添加副柜
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="sub-cabinets-list">
+                                <!-- 副柜列表将通过JavaScript动态生成 -->
+                                <div class="alert alert-warning" id="no-sub-cabinets-alert">
+                                    <i class="fa fa-exclamation-triangle mr-2"></i>
+                                    尚未添加副柜，您可以点击上方按钮添加副柜。
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 步骤四：生成方案 -->
+                        <div id="step-4-content" class="step-content" style="display: none;">
+                            <h3 class="mb-4">步骤四：生成方案</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-secondary text-white">
+                                            <h5 class="mb-0">方案总览</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="solution-overview">
+                                                <!-- 方案总览将通过JavaScript动态生成 -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header text-white" style="background-color: #002B69;">
+                                            <h5 class="mb-0">保存方案</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <form id="save-solution-form">
+                                                <div class="mb-3">
+                                                    <label for="solution-name" class="form-label">方案名称</label>
+                                                    <input type="text" class="form-control" id="solution-name" required>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="solution-description" class="form-label">方案描述（可选）</label>
+                                                    <textarea class="form-control" id="solution-description" rows="3"></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary w-100">
+                                                    <i class="fa fa-save mr-2"></i>保存方案
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-secondary text-white">
+                                            <h5 class="mb-0">详细配置清单</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="detailed-configuration">
+                                                <!-- 详细配置清单将通过JavaScript动态生成 -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- 已保存方案模态框 -->
+    <div class="modal fade" id="saved-solutions-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">已保存方案</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="saved-solutions-list">
+                        <!-- 已保存方案列表将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加副柜模态框 -->
+    <div class="modal fade" id="add-sub-cabinet-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">添加副柜</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="sub-cabinet-type" class="form-label">副柜类型</label>
+                        <select class="form-select" id="sub-cabinet-type" required>
+                            <option value="">请选择副柜类型</option>
+                            <!-- 副柜类型选项将通过JavaScript动态生成 -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="confirm-add-sub-cabinet-btn">确认添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 副柜配置模态框 -->
+    <div class="modal fade" id="sub-cabinet-config-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">副柜配置</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="sub-cabinet-config-content">
+                        <!-- 副柜配置内容将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 方案详情模态框 -->
+    <div class="modal fade" id="solution-detail-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">方案详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="solution-detail-content">
+                        <!-- 方案详情内容将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="export-pdf-btn">
+                        <i class="fa fa-file-pdf-o mr-2"></i>导出PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- 底部页脚 -->
+    <footer class="footer mt-auto py-4" style="background-color: #002B69; color: white;">
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center flex-wrap">
+                <div class="mx-4">
+                    <p class="mb-0">客服热线：400-xxx-xxxx</p>
+                </div>
+                <div class="mx-4">
+                    <p class="mb-0">© GESAC金鹭</p>
+                </div>
+                <div class="mx-4">
+                    <a href="#" class="text-white mx-2">隐私政策</a>
+                    <a href="http://www.gesac.com.cn" class="text-white mx-2" target="_blank">企业官网</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 自定义脚本 -->
+    <script src="js/app.js"></script>
+</body>
+</html>
