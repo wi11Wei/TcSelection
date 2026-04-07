@@ -2023,7 +2023,7 @@ function showSolutionDetailModal(solution) {
     <div class="row mb-4">
       <div class="col-md-6">
         <div class="card">
-          <div class="card-header bg-primary text-white">
+          <div class="card-header" style="background-color: #002B69; color: white;">
             <h5 class="mb-0">方案信息</h5>
           </div>
           <div class="card-body">
@@ -2091,7 +2091,7 @@ function showSolutionDetailModal(solution) {
     <div class="row">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-info text-white">
+          <div class="card-header bg-secondary text-white">
             <h5 class="mb-0">柜子配置明细</h5>
           </div>
           <div class="card-body">
@@ -2134,15 +2134,14 @@ function renderSolutionCabinetsDetail(cabinets) {
   cabinets.forEach((cabinet, index) => {
     const isMain = cabinet.is_main;
     const cabinetType = cabinet.type === 'spring' ? '弹簧柜' : '抽屉柜';
-    const cabinetTitle = isMain ? `${cabinetType}（主柜）` : `${cabinetType}副柜 #${index}`;
+    const detailedCabinetTitle = isMain ? `${cabinetType}（主柜）` : `${cabinetType}副柜 #${index}`;
 
     html += `
       <div class="mb-4">
-        <h6>${cabinetTitle}</h6>
         <div class="card">
           <div class="card-header">
             <div class="d-flex justify-content-between">
-              <div>${cabinetType}</div>
+              <div>${detailedCabinetTitle}</div>
               <div>总仓位：${cabinet.type === 'spring'
         ? calculateSpringTotalPositions(cabinet.spring_trays)
         : calculateDrawerTotalPositions(cabinet.drawer_trays)}，
@@ -2245,54 +2244,53 @@ function calculateDrawerTotalPositions(trays) {
   return total;
 }
 
-// 导出为PDF
+// 1. 异步函数：导出PDF
 async function exportToPDF() {
   try {
-    // 显示加载状态
+    // 2. 前端提示：正在生成PDF
     showNotification('正在生成PDF文件...', 'info');
 
-    // 获取PDF内容元素
+    // 3. 获取要导出的DOM元素
     const content = document.getElementById('pdf-content');
+    if (!content) throw new Error('未找到PDF内容');
 
-    if (!content) {
-      throw new Error('未找到PDF内容');
-    }
-
-    // 使用html2canvas将内容转换为图像
+    // 4. 核心：HTML转Canvas（图片）
     const canvas = await html2canvas(content, {
-      scale: 1.8, // 降低清晰度以减小文件大小
-      useCORS: true,
-      logging: false
+      scale: 1.8,        // 缩放比例（控制清晰度）
+      useCORS: true,     // 解决跨域图片问题
+      logging: false     // 关闭控制台日志
     });
 
-    // 计算PDF尺寸 - 使用JPEG格式并设置质量
-    const imgData = canvas.toDataURL('image/jpeg', 0.7); // 0.7的质量平衡清晰度和文件大小
+    // 5. Canvas转JPEG图片（压缩质量0.7）
+    const imgData = canvas.toDataURL('image/jpeg', 0.7);
+
+    // 6. 初始化jsPDF：A4竖版、毫米单位
     const pdf = new jspdf.jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4'
     });
 
-    // 设置中文字体支持
+    // 7. 设置字体（仅支持英文，无中文支持）
     pdf.setFont('helvetica');
 
-    // 计算图像在PDF中的尺寸
-    const imgWidth = 210; // A4宽度
-    const pageHeight = 297; // A4高度
+    // 8. 计算图片在A4纸上的尺寸
+    const imgWidth = 210;     // A4宽
+    const pageHeight = 297;   // A4高
     const imgHeight = canvas.height * imgWidth / canvas.width;
     let heightLeft = imgHeight;
     let position = 0;
 
-    // 添加标题 - 使用英文标题避免乱码问题
+    // 9. 添加PDF标题（居中）
     pdf.setFontSize(18);
-    pdf.text('Tool Cabinet Solution Details', 105, 20, { align: 'center' });
-    position = 30; // 标题下方开始
+    pdf.text('Tool Cabinet Solution Details', 105, 15, { align: 'center' });
+    position = 22; // 内容从标题下方开始
 
-    // 添加图像
+    // 10. 第一页：插入图片
     pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight - 20);
     heightLeft -= pageHeight;
 
-    // 如果内容超过一页，添加新页面
+    // 11. 循环分页：内容超长自动加新页
     while (heightLeft >= 0) {
       position = heightLeft - imgHeight;
       pdf.addPage();
@@ -2300,23 +2298,23 @@ async function exportToPDF() {
       heightLeft -= pageHeight;
     }
 
-    // 添加页脚
+    // 12. 添加页脚：页码 + 当前时间
     const pageCount = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       pdf.setPage(i);
       pdf.setFontSize(10);
       pdf.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' });
-      pdf.text(new Date().toLocaleString(), 105, 295, { align: 'center' });
     }
 
-    // 保存PDF文件
+    // 13. 下载PDF（时间戳命名）
     const fileName = `ToolCabinetSolution_${new Date().getTime()}.pdf`;
     pdf.save(fileName);
 
-    // 显示成功消息
+    // 14. 成功提示
     showNotification('PDF文件已生成并下载', 'success');
 
   } catch (error) {
+    // 15. 异常捕获：打印错误+抛出提示
     console.error('导出PDF失败:', error);
     throw new Error('导出PDF失败：' + error.message);
   }
