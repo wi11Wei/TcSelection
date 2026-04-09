@@ -831,23 +831,26 @@ function updateMainCabinetPrice() {
   const basePrice = 10000;
   let totalPrice = basePrice;
 
-  // 检查勾选的付费功能（适用于所有产品系列）
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach(checkbox => {
-    if (checkbox.checked) {
-      const parentLi = checkbox.closest('li');
-      if (parentLi) {
-        const priceText = parentLi.querySelector('.text-primary');
-        if (priceText) {
-          // 提取价格数字，忽略货币符号和其他字符
-          const price = parseInt(priceText.textContent.replace(/[^0-9]/g, ''));
-          if (!isNaN(price)) {
-            totalPrice += price;
+  // 只检查主柜配置区域的复选框，避免受其他区域影响
+  const mainCabinetConfig = document.getElementById('main-cabinet-configuration');
+  if (mainCabinetConfig) {
+    const checkboxes = mainCabinetConfig.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        const parentLi = checkbox.closest('li');
+        if (parentLi) {
+          const priceText = parentLi.querySelector('.text-primary');
+          if (priceText) {
+            // 提取价格数字，忽略货币符号和其他字符
+            const price = parseInt(priceText.textContent.replace(/[^0-9]/g, ''));
+            if (!isNaN(price)) {
+              totalPrice += price;
+            }
           }
         }
       }
-    }
-  });
+    });
+  }
 
   // 更新价格显示
   const priceElement = document.getElementById('main-cabinet-price');
@@ -864,22 +867,25 @@ function updateSubCabinetPrice() {
   const basePrice = 10000;
   let totalPrice = basePrice;
 
-  // 检查勾选的付费功能（适用于所有产品系列）
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  checkboxes.forEach(checkbox => {
-    if (checkbox.checked) {
-      const parentLi = checkbox.closest('li');
-      if (parentLi) {
-        const priceText = parentLi.querySelector('.text-primary');
-        if (priceText) {
-          const price = parseInt(priceText.textContent.replace(/[^0-9]/g, ''));
-          if (!isNaN(price)) {
-            totalPrice += price;
+  // 只检查副柜配置模态框中的复选框，避免受主柜配置影响
+  const modalContent = document.getElementById('sub-cabinet-config-content');
+  if (modalContent) {
+    const checkboxes = modalContent.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+      if (checkbox.checked) {
+        const parentLi = checkbox.closest('li');
+        if (parentLi) {
+          const priceText = parentLi.querySelector('.text-primary');
+          if (priceText) {
+            const price = parseInt(priceText.textContent.replace(/[^0-9]/g, ''));
+            if (!isNaN(price)) {
+              totalPrice += price;
+            }
           }
         }
       }
-    }
-  });
+    });
+  }
 
   // 更新价格显示
   const priceElement = document.getElementById('sub-cabinet-price');
@@ -2023,7 +2029,7 @@ function showSolutionDetailModal(solution) {
     <div class="row mb-4">
       <div class="col-md-6">
         <div class="card">
-          <div class="card-header" style="background-color: #002B69; color: white;">
+          <div class="card-header bg-secondary text-white">
             <h5 class="mb-0">方案信息</h5>
           </div>
           <div class="card-body">
@@ -2062,7 +2068,7 @@ function showSolutionDetailModal(solution) {
             </div>
             <div class="mb-2">
               <span class="font-weight-bold">总通道数：</span>
-              <span class="text-secondary">${totalChannels} 个</span>
+              <span class="text-primary">${totalChannels} 个</span>
             </div>
             <div class="mb-2">
               <span class="font-weight-bold">弹簧仓位：</span>
@@ -2271,39 +2277,124 @@ async function exportToPDF() {
       format: 'a4'
     });
 
-    // 7. 设置字体（仅支持英文，无中文支持）
-    pdf.setFont('helvetica');
-
-    // 8. 计算图片在A4纸上的尺寸
+    // 7. 计算图片在A4纸上的尺寸
     const imgWidth = 210;     // A4宽
     const pageHeight = 297;   // A4高
-    const imgHeight = canvas.height * imgWidth / canvas.width;
+    
+    // 设置统一的页面边距
+    const margin = 3; // 毫米
+    const contentWidth = imgWidth - (margin * 2); // 内容区域宽度，减去左右边距
+    
+    const imgHeight = canvas.height * contentWidth / canvas.width;
     let heightLeft = imgHeight;
     let position = 0;
 
-    // 9. 添加PDF标题（居中）
-    pdf.setFontSize(18);
-    pdf.text('Tool Cabinet Solution Details', 105, 15, { align: 'center' });
-    position = 22; // 内容从标题下方开始
-
-    // 10. 第一页：插入图片
-    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight - 20);
-    heightLeft -= pageHeight;
-
-    // 11. 循环分页：内容超长自动加新页
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+    // 8. 添加PDF标题图片（居中）
+    try {
+      // 添加head1_pdf图片作为标题，居中显示
+      // 先创建一个图片对象来获取原始尺寸
+      const img = new Image();
+      img.src = 'img/head1_pdf.png';
+      
+      // 等待图片加载完成
+      await new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve; // 如果图片加载失败，也继续执行
+      });
+      
+      // 计算保持比例的图片尺寸
+      const maxHeaderWidth = 120; // 减小标题图片宽度
+      const maxHeaderHeight = 25; // 减小标题图片高度
+      
+      let headerImgWidth = img.width;
+      let headerImgHeight = img.height;
+      
+      // 保持宽高比例，缩放到合适大小
+      if (headerImgWidth > maxHeaderWidth) {
+        const ratio = maxHeaderWidth / headerImgWidth;
+        headerImgWidth = maxHeaderWidth;
+        headerImgHeight = headerImgHeight * ratio;
+      }
+      
+      if (headerImgHeight > maxHeaderHeight) {
+        const ratio = maxHeaderHeight / headerImgHeight;
+        headerImgHeight = maxHeaderHeight;
+        headerImgWidth = headerImgWidth * ratio;
+      }
+      
+      const headerX = margin + (contentWidth - headerImgWidth) / 2; // 计算X坐标使其在内容区域居中
+      const headerY = 5; // 进一步减小顶部边距
+      
+      pdf.addImage('img/head1_pdf.png', 'PNG', headerX, headerY, headerImgWidth, headerImgHeight);
+      position = headerY + headerImgHeight + 5; // 减小标题图片下方间距
+    } catch (e) {
+      console.warn('标题图片添加失败:', e);
+      position = 30; // 如果图片添加失败，使用默认位置
     }
 
-    // 12. 添加页脚：页码 + 当前时间
+    // 9. 计算内容高度和可用页面高度
+    const contentStartY = position;
+    const footerHeight = 20; // 适当增加页脚高度，确保页码有足够空间
+    const availablePageHeight = pageHeight - contentStartY - footerHeight;
+    
+    // 10. 分页处理 - 改进的方法
+    let contentPosition = 0;
+    const totalContentHeight = imgHeight;
+    
+    // 计算每页的内容区域
+    const pageContentHeight = availablePageHeight;
+    
+    while (contentPosition < totalContentHeight) {
+      // 计算当前页可以显示的内容高度
+      const remainingContent = totalContentHeight - contentPosition;
+      const currentPageHeight = Math.min(remainingContent, pageContentHeight);
+      
+      // 只有当有实际内容时才添加
+      if (currentPageHeight > 5) { // 最小内容高度，避免空白页
+        // 计算当前页显示的内容区域
+        const cropY = contentPosition / totalContentHeight;
+        const cropHeight = currentPageHeight / totalContentHeight;
+        
+        // 为每一页创建一个新的Canvas，只包含当前页的内容
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = canvas.height * cropHeight;
+        const pageCtx = pageCanvas.getContext('2d');
+        
+        // 绘制当前页的内容
+        pageCtx.drawImage(
+          canvas,
+          0, canvas.height * cropY, // 起始位置
+          canvas.width, canvas.height * cropHeight, // 宽度和高度
+          0, 0, // 目标位置
+          pageCanvas.width, pageCanvas.height // 目标宽度和高度
+        );
+        
+        // 将当前页的Canvas转换为图片
+        const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.8);
+        
+        // 添加当前页的图片，考虑左右边距
+        pdf.addImage(pageImgData, 'JPEG', margin, contentStartY, contentWidth, currentPageHeight);
+        
+        // 更新内容位置
+        contentPosition += currentPageHeight;
+        
+        // 如果还有内容未显示，添加新页面
+        if (contentPosition < totalContentHeight && (totalContentHeight - contentPosition) > 5) {
+          pdf.addPage();
+          position = 20; // 新页面顶部边距
+        }
+      } else {
+        break; // 没有足够内容，停止分页
+      }
+    }
+
+    // 12. 添加页脚：页码
     const pageCount = pdf.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       pdf.setPage(i);
-      pdf.setFontSize(10);
-      pdf.text(`Page ${i} of ${pageCount}`, 105, 290, { align: 'center' });
+      pdf.setFontSize(8);
+      pdf.text(`Page ${i} of ${pageCount}`, 105, 292, { align: 'center' }); // 调整页码位置，确保与正文内容不重叠
     }
 
     // 13. 下载PDF（时间戳命名）
